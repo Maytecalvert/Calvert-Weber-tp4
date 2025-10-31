@@ -4,7 +4,7 @@ import dotenv from "dotenv";
 dotenv.config();
 
 import { sequelize } from "./config/dbconfig.js";
-import "./models/models.js"; 
+import "./models/models.js"; // solo registra modelos
 
 import AuthRouter from "./routes/auth.router.js";
 import CancionesRouter from "./routes/canciones.router.js";
@@ -15,7 +15,7 @@ app.use(cors());
 app.use(express.json());
 
 // Rutas
-app.get("/", (_, res) => res.send("API TP4 Sequelize (solo ORM)"));
+app.get("/", (_, res) => res.send("API TP4 Sequelize (solo ORM, sin sync)"));
 app.use("/auth", AuthRouter);
 app.use("/cancion", CancionesRouter);
 app.use("/escucho", EscuchasRouter);
@@ -24,10 +24,8 @@ app.use("/escucho", EscuchasRouter);
 const start = async () => {
   try {
     await sequelize.authenticate();
-    console.log("Conexión establecida correctamente.");
+    console.log(" Conexión establecida correctamente.");
 
-    await sequelize.sync({ alter: true }); 
-    console.log("Tablas sincronizadas con la base de datos.");
 
     const PORT = process.env.PORT || 9000;
     app.listen(PORT, () => console.log(`Servidor corriendo en puerto ${PORT}`));
@@ -37,3 +35,4 @@ const start = async () => {
 };
 
 start();
+

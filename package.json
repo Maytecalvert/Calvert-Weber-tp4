@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "start": "node src/index.js"
+    "start": "node index.js"
   },
   "dependencies": {
     "bcrypt": "^5.1.0",
@@ -14,5 +14,18 @@
     "sequelize": "^6.37.1",
     "pg": "^8.11.3",
     "pg-hstore": "^2.3.4"
-  }
+  },
+  "description": "",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Maytecalvert/Calvert-Weber-tp4.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Maytecalvert/Calvert-Weber-tp4/issues"
+  },
+  "homepage": "https://github.com/Maytecalvert/Calvert-Weber-tp4#readme"
 }
