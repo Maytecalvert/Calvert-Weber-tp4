@@ -1,11 +1,10 @@
-
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 dotenv.config();
 
 import { sequelize } from "./config/dbconfig.js";
-import "./models/index.js";
+import "./models/models.js"; // importa y registra modelos + relaciones
 
 import AuthRouter from "./routes/auth.router.js";
 import CancionesRouter from "./routes/canciones.router.js";
@@ -15,24 +14,33 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-app.get("/", (_, res) => res.send("API TP4 Sequelize (solo ORM)"));
+// Ruta base
+app.get("/", (_, res) =>
+  res.send("API TP4 Sequelize (con relaciones + sync)")
+);
+
+// Rutas principales
 app.use("/auth", AuthRouter);
 app.use("/cancion", CancionesRouter);
 app.use("/escucho", EscuchasRouter);
 
-app.use((req, res) => {
-  res.status(404).json({ Error: "unknown endpoint", Path: req.path });
-});
-
+// Inicialización con SYNC
 const start = async () => {
-  await sequelize.authenticate();
-  await sequelize.sync({ alter: true });
-  console.log("DB conectada y sincronizada (Sequelize).");
-  app.listen(process.env.PORT || 9000, () => {
-    console.log("Servidor escuchando en puerto", process.env.PORT || 9000);
-  });
+  try {
+    await sequelize.authenticate();
+    console.log("✅ Conexión establecida correctamente con la base de datos.");
+
+    // 💡 Punto 4 del TP: sincroniza los modelos declarados en Sequelize
+    await sequelize.sync(); // crea o actualiza las tablas si es necesario
+    console.log("🧩 Modelos sincronizados correctamente con Sequelize.");
+
+    const PORT = process.env.PORT || 9000;
+    app.listen(PORT, () =>
+      console.log(`🚀 Servidor corriendo en puerto ${PORT}`)
+    );
+  } catch (error) {
+    console.error("❌ Error al iniciar la base de datos:", error);
+  }
 };
 
 start();
-
-
