@@ -1,13 +1,12 @@
 import AuthService from "../services/auth.service.js";
-import EscuchasService from "../services/escuchas.service.js"; // importamos el service de escuchas
-
+import EscuchasService from "../services/escuchas.service.js"; 
 const crearUsuario = async (req, res) => {
   try {
-    const { userid, nombre, password } = req.body;
-    if (!userid || !nombre || !password)
+    const { id, nombre, password } = req.body;
+    if (!id || !nombre || !password)
       return res.status(400).json({ message: "Faltan campos" });
 
-    const user = await AuthService.crearUsuario({ userid, nombre, password });
+    const user = await AuthService.crearUsuario({ id, nombre, password });
     res.status(201).json(user);
   } catch (e) {
     res.status(500).json({ message: e.message });
@@ -16,11 +15,11 @@ const crearUsuario = async (req, res) => {
 
 const login = async (req, res) => {
   try {
-    const { userid, password } = req.body;
-    if (!userid || !password)
+    const { id, password } = req.body;
+    if (!id || !password)
       return res.status(400).json({ message: "Faltan credenciales" });
 
-    const token = await AuthService.login({ userid, password });
+    const token = await AuthService.login({ id, password });
     res.json({ token });
   } catch (e) {
     res.status(e.code || 500).json({ message: e.message });
