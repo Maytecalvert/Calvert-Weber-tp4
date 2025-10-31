@@ -2,7 +2,7 @@
     "version": 2,
     "builds": [
      {
-      "src": "/model/index.js",
+      "src": "/models/index.js",
       "use": "@vercel/node",
       "config": { "includeFiles": ["dist/"] }
      }
