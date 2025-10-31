@@ -2,13 +2,14 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { Usuario, Escucha, Cancion } from "../models/models.js";
 
-const crearUsuario = async ({ userid, nombre, password }) => {
+const crearUsuario = async ( userid, nombre, password ) => {
+  console.log(userid)
   const hashed = await bcrypt.hash(password, 10);
   const user = await Usuario.create({ userid, nombre, password: hashed, rol: "usuario" });
   return { id: user.id, userid: user.userid, nombre: user.nombre, rol: user.rol };
 };
 
-const login = async ({ userid, password }) => {
+const login = async (userid, password ) => {
   const user = await Usuario.findOne({ where: { userid } });
   if (!user) { const e = new Error("Usuario no encontrado"); e.code = 404; throw e; }
   const ok = await bcrypt.compare(password, user.password);
@@ -28,5 +29,8 @@ const escuchoListado = async (userId) => {
     fechaEscucha: r.fechaEscucha
   }));
 };
-
-export default { crearUsuario, login, escuchoListado };
+const verifyRole = async(id)=>{
+    const user = await Usuario.findByPk(id);
+    return user ? user.role : null;
+}
+export default { crearUsuario, login, escuchoListado, verifyRole };
