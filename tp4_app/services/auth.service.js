@@ -1,6 +1,6 @@
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import { Usuario, Escucha, Cancion } from "../models/index.js";
+import { Usuario, Escucha, Cancion } from "../models/models.js";
 
 const crearUsuario = async ({ userid, nombre, password }) => {
   const hashed = await bcrypt.hash(password, 10);

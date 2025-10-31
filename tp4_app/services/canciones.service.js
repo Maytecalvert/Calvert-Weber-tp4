@@ -1,4 +1,4 @@
-import { Cancion } from "../models/index.js";
+import { Cancion } from "../models/models.js";
 
 const create = async (nombre) => {
   const c = await Cancion.create({ nombre });

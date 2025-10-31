@@ -4,7 +4,7 @@ import dotenv from "dotenv";
 dotenv.config();
 
 import { sequelize } from "./config/dbconfig.js";
-import "./models/index.js"; 
+import "./models/models.js"; 
 
 import AuthRouter from "./routes/auth.router.js";
 import CancionesRouter from "./routes/canciones.router.js";
