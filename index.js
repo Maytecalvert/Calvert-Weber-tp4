@@ -1,10 +1,11 @@
+
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 dotenv.config();
 
 import { sequelize } from "./config/dbconfig.js";
-import "./models/models.js"; // solo registra modelos
+import "./models/index.js";
 
 import AuthRouter from "./routes/auth.router.js";
 import CancionesRouter from "./routes/canciones.router.js";
@@ -14,25 +15,24 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Rutas
-app.get("/", (_, res) => res.send("API TP4 Sequelize (solo ORM, sin sync)"));
+app.get("/", (_, res) => res.send("API TP4 Sequelize (solo ORM)"));
 app.use("/auth", AuthRouter);
 app.use("/cancion", CancionesRouter);
 app.use("/escucho", EscuchasRouter);
 
-// Inicialización de la BD
+app.use((req, res) => {
+  res.status(404).json({ Error: "unknown endpoint", Path: req.path });
+});
+
 const start = async () => {
-  try {
-    await sequelize.authenticate();
-    console.log(" Conexión establecida correctamente.");
-
-
-    const PORT = process.env.PORT || 9000;
-    app.listen(PORT, () => console.log(`Servidor corriendo en puerto ${PORT}`));
-  } catch (error) {
-    console.error("Error al iniciar la base de datos:", error);
-  }
+  await sequelize.authenticate();
+  await sequelize.sync({ alter: true });
+  console.log("DB conectada y sincronizada (Sequelize).");
+  app.listen(process.env.PORT || 9000, () => {
+    console.log("Servidor escuchando en puerto", process.env.PORT || 9000);
+  });
 };
 
 start();
+
 
