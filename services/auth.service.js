@@ -2,19 +2,35 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { Usuario, Escucha, Cancion } from "../models/models.js";
 
-const crearUsuario = async ( userid, nombre, password ) => {
-  console.log(userid)
+const crearUsuario = async (userid, nombre, password, rol) => {
+  console.log(userid);
   const hashed = await bcrypt.hash(password, 10);
-  const user = await Usuario.create({ userid, nombre, password: hashed, rol: "usuario" });
+
+  // Por defecto "usuario", solo acepta "admin" si se envía explícitamente
+  const rolFinal = rol === "admin" ? "admin" : "usuario";
+
+  const user = await Usuario.create({ userid, nombre, password: hashed, rol: rolFinal });
   return { id: user.id, userid: user.userid, nombre: user.nombre, rol: user.rol };
 };
 
-const login = async (userid, password ) => {
+const login = async (userid, password) => {
   const user = await Usuario.findOne({ where: { userid } });
-  if (!user) { const e = new Error("Usuario no encontrado"); e.code = 404; throw e; }
+  if (!user) { 
+    const e = new Error("Usuario no encontrado"); 
+    e.code = 404; 
+    throw e; 
+  }
   const ok = await bcrypt.compare(password, user.password);
-  if (!ok) { const e = new Error("Clave inválida"); e.code = 401; throw e; }
-  return jwt.sign({ id: user.id, nombre: user.nombre, rol: user.rol }, process.env.JWT_SECRET, { expiresIn: "2h" });
+  if (!ok) { 
+    const e = new Error("Clave inválida"); 
+    e.code = 401; 
+    throw e; 
+  }
+  return jwt.sign(
+    { id: user.id, nombre: user.nombre, rol: user.rol },
+    process.env.JWT_SECRET,
+    { expiresIn: "2h" }
+  );
 };
 
 const escuchoListado = async (userId) => {
@@ -29,8 +45,11 @@ const escuchoListado = async (userId) => {
     fechaEscucha: r.fechaEscucha
   }));
 };
-const verifyRole = async(id)=>{
-    const user = await Usuario.findByPk(id);
-    return user ? user.role : null;
-}
+
+const verifyRole = async (id) => {
+  const user = await Usuario.findByPk(id);
+  return user ? user.role : null;
+};
+
 export default { crearUsuario, login, escuchoListado, verifyRole };
+
